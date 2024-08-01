@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,12 +30,8 @@ public class Line {
     @Column(length = 20, nullable = false)
     private String color;
 
-    @OneToMany(
-            mappedBy = "line",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Section> sections = new ArrayList<>();
+    @Embedded
+    private Sections sections = new Sections();
 
     public Line() {}
 
@@ -69,42 +66,18 @@ public class Line {
     }
 
     public void addSection(Long upStationId, Long downStationId, int distance) {
-        this.sections.add(new Section(upStationId, downStationId, distance, this));
+        this.sections.addSection(new Section(upStationId, downStationId, distance, this));
     }
 
     public void deleteSection(Long stationId) {
-        Section deleteSection = sections.stream().filter(section -> section.isDownStationId(stationId)).findAny()
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_STATION));
-
-        if (this.sections.size() < 2) {
-            throw new BadRequestException(INVALID_SECTION_MIN);
-        }
-
-        deleteSection.remove();
-        this.sections.remove(deleteSection);
+        this.sections.deleteSection(stationId);
     }
 
     public int getDistance() {
-        return this.sections.stream().mapToInt(Section::getDistance).sum();
+        return this.sections.calculateDistance();
     }
 
-    public Optional<Long> getUpStationId() {
-        if (this.sections.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(this.sections.get(0).getUpStationId());
-    }
-
-    public Optional<Long> getDownStationId() {
-        if (this.sections.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(this.sections.get(this.sections.size() - 1).getDownStationId());
-    }
-
-    public List<Long> getStationsIds() {
-        Long upStationId = getUpStationId().orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다."));
-        Long downStationId = getDownStationId().orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다."));
-        return List.of(upStationId, downStationId);
+    public Sections getSections() {
+        return sections;
     }
 }

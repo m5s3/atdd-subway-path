@@ -11,10 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subway.Line.domain.Line;
 import subway.Line.domain.Section;
+import subway.Line.domain.Sections;
 import subway.Line.presentation.dto.LineRequest;
 import subway.Line.presentation.dto.LineResponse;
 import subway.Line.infrastructure.LineRepository;
 import subway.Line.presentation.dto.SectionRequest;
+import subway.Line.presentation.dto.SectionResponse;
+import subway.Line.presentation.dto.SectionsResponse;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.Station.presentation.dto.StationResponse;
@@ -34,20 +37,16 @@ public class LineService {
 
     @Transactional
     public LineResponse saveLine(LineRequest lineRequest) {
+        System.out.println("lineRequest = " + lineRequest);
         Line line = lineRepository.save(toEntity(lineRequest));
         line.addSection(lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
-        return createLineResponse(line, lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
+        System.out.println("line.getSections() = " + line.getSections());
+        System.out.println("line.getSections().getUpStationId() = " + line.getSections().getUpStationId());
+        return createLineResponse(line);
     }
 
-    private LineResponse createLineResponse(Line line, Long upStationId, Long downStationId, int distance) {
-        Station upStation = stationRepository.findById(upStationId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다. id=" + upStationId));
-
-        Station downStation = stationRepository.findById(downStationId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다. id=" + downStationId));
-
-        return new LineResponse(line.getId(), line.getName(), line.getColor(),
-                StationResponse.fromEntity(upStation), StationResponse.fromEntity(downStation), distance);
+    private LineResponse createLineResponse(Line line) {
+        return new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections()));
     }
 
     private Line toEntity(LineRequest lineRequest) {
@@ -57,65 +56,24 @@ public class LineService {
     }
 
     public List<LineResponse> findAllLines() {
-        /**
-         *
-         *        return lines.stream()
-         *                 .map(Line::getStationsIds)
-         *                 .flatMap(List::stream)
-         *                 .collect(Collectors.toList());
-         */
         List<Line> lines = lineRepository.findAll();
-        Map<Long, Station> stations = fetchStations(fetchStationsIds(lines));
 
         return lines.stream()
-                .map(line -> new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance()
-                ,createStationsResponses(stations, line)))
+                .map(line -> new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections())))
                 .collect(Collectors.toList());
-
-//        List<Long> stationsIds = lines.stream()
-//                .map(Line::getStationsIds)
-//                .flatMap(List::stream)
-//                .collect(Collectors.toList());
-//        Map<Long, Station> stations = fetchStations(stationsIds);
-
-
-
-//
-//        return lines.stream().map(line ->
-//                        new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(),
-//                                createStationsResponses(stations, line))
-//                )
-//                .collect(Collectors.toList());
     }
 
     public LineResponse findLine(Long lineId) {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 지하철 노선은 존재하지 않습니다. id=" + lineId));
-
-        Map<Long, Station> stations = fetchStations(fetchStationsIds(List.of(line)));
-
-        return new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createStationsResponses(stations, line));
+        return new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections()));
     }
 
-    private List<StationResponse> createStationsResponses(Map<Long, Station> stations, Line line) {
-        Long upStationId = line.getUpStationId().orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다."));
-        Long downStationId = line.getDownStationId().orElseThrow(() -> new IllegalArgumentException("해당 지하철 역은 존재하지 않습니다."));
-        Station upStation = stations.get(upStationId);
-        Station downStation = stations.get(downStationId);
-        return List.of(StationResponse.fromEntity(upStation),
-                StationResponse.fromEntity(downStation));
-    }
-
-    private List<Long> fetchStationsIds(List<Line> lines) {
-        return lines.stream()
-                .map(Line::getStationsIds)
-                .flatMap(List::stream)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    private Map<Long, Station> fetchStations(List<Long> ids) {
-        return toMap(stationRepository.findStationsByIdIn(ids));
+    private SectionsResponse createSectionsResponse(Sections sections) {
+        return new SectionsResponse(sections.getSections().stream()
+                .map(section -> new SectionResponse(section.getId(), section.getUpStationId(),
+                        section.getDownStationId(), section.getDistance()))
+                .collect(Collectors.toList()));
     }
 
     private Map<Long, Station> toMap(List<Station> stations) {

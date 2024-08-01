@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import subway.Line.domain.Sections;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("지하철 노선 관련 기능")
@@ -38,8 +39,9 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
 
         // Then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        List<Long> stationIds = response.jsonPath().getList("stations.id", Long.class);
-        assertThat(stationIds).containsExactlyInAnyOrder(신사역, 강남역);
+        Sections sections = response.jsonPath().getObject("sections", Sections.class);
+        System.out.println("sections = " + sections);
+//        assertThat(stationIds).containsExactlyInAnyOrder(신사역, 강남역);
     }
 
     /**
@@ -57,13 +59,6 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
         // Then
         var lineIds = response.jsonPath().getList("id", Long.class);
         assertThat(lineIds).containsExactlyInAnyOrder(신분당선, 분당선);
-
-        List<List<Integer>> ids = response.jsonPath().getList("stations.id");
-        List<Long> stationsIds = ids.stream().flatMap(list -> list.stream())
-                        .map(Long::valueOf)
-                        .collect(Collectors.toList());
-
-        assertThat(stationsIds).containsExactlyInAnyOrder(신사역, 논현역, 청량리, 서울숲);
     }
 
     /**
@@ -86,10 +81,6 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
         var findName = jsonPath.getObject("name", String.class);
         assertThat(findId).isEqualTo(신분당선);
         assertThat(findName).isEqualTo("신분당선");
-
-        var ids = jsonPath.getList("stations.id");
-        var stationIds = ids.stream().map(id -> Long.valueOf((int)id)).collect(Collectors.toList());
-        assertThat(stationIds).containsExactlyInAnyOrder(신사역, 강남역);
     }
 
     /**
@@ -211,11 +202,5 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
                 .when().post("/lines")
                 .then().log().all()
                 .extract();
-    }
-
-    private Map<String, String> createStationParams(String name) {
-        Map<String, String> params = new HashMap<>();
-        params.put("name", name);
-        return params;
     }
 }

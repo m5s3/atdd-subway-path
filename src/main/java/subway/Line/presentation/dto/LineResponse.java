@@ -1,6 +1,7 @@
 package subway.Line.presentation.dto;
 
 import java.util.List;
+import subway.Line.domain.Sections;
 import subway.Station.presentation.dto.StationResponse;
 
 public class LineResponse {
@@ -9,19 +10,14 @@ public class LineResponse {
     private String name;
     private String color;
     private int distance;
-    private List<StationResponse> stations;
+    private SectionsResponse sections;
 
-    public LineResponse(Long id, String name, String color, StationResponse upStationResponse,
-            StationResponse downStationResponse, int distance) {
-        this(id, name, color, distance, List.of(upStationResponse, downStationResponse));
-    }
-
-    public LineResponse(Long id, String name, String color, int distance, List<StationResponse> stations) {
+    public LineResponse(Long id, String name, String color, int distance, SectionsResponse sections) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.distance = distance;
-        this.stations = stations;
+        this.sections = sections;
     }
 
     public Long getId() {
@@ -40,7 +36,7 @@ public class LineResponse {
         return distance;
     }
 
-    public List<StationResponse> getStations() {
-        return stations;
+    public SectionsResponse getSections() {
+        return sections;
     }
 }
