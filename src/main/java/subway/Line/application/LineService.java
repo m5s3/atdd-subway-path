@@ -37,11 +37,8 @@ public class LineService {
 
     @Transactional
     public LineResponse saveLine(LineRequest lineRequest) {
-        System.out.println("lineRequest = " + lineRequest);
         Line line = lineRepository.save(toEntity(lineRequest));
         line.addSection(lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
-        System.out.println("line.getSections() = " + line.getSections());
-        System.out.println("line.getSections().getUpStationId() = " + line.getSections().getUpStationId());
         return createLineResponse(line);
     }
 
