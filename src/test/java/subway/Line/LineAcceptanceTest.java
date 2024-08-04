@@ -40,8 +40,8 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
         // Then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         Sections sections = response.jsonPath().getObject("sections", Sections.class);
-        System.out.println("sections = " + sections);
-//        assertThat(stationIds).containsExactlyInAnyOrder(신사역, 강남역);
+        assertThat(sections.getUpStationId()).isEqualTo(신사역);
+        assertThat(sections.getDownStationId()).isEqualTo(강남역);
     }
 
     /**
