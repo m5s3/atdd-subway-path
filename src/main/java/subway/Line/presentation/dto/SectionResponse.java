@@ -8,15 +8,11 @@ public class SectionResponse {
     private Long downStationId;
     private int distance;
 
-    public SectionResponse(Section section) {
-        this(section.getId(), section.getUpStationId(), section.getDownStationId(), section.getDistance());
-    }
-
-    public SectionResponse(Long id, Long upStationId, Long downStationId, int distance) {
-        this.id = id;
-        this.upStationId = upStationId;
-        this.downStationId = downStationId;
-        this.distance = distance;
+    private SectionResponse(Builder builder) {
+        this.id = builder.id;
+        this.upStationId = builder.upStationId;
+        this.downStationId = builder.downStationId;
+        this.distance = builder.distance;
     }
 
     public Long getId() {
@@ -33,5 +29,35 @@ public class SectionResponse {
 
     public int getDistance() {
         return distance;
+    }
+
+    public static class Builder {
+        private final Long id;
+        private Long upStationId;
+        private Long downStationId;
+        private int distance;
+
+        public Builder(Long id) {
+            this.id = id;
+        }
+
+        public Builder upStationId(Long upStationId) {
+            this.upStationId = upStationId;
+            return this;
+        }
+
+        public Builder downStationId(Long downStationId) {
+            this.downStationId = downStationId;
+            return this;
+        }
+
+        public Builder distance(int distance) {
+            this.distance = distance;
+            return this;
+        }
+
+        public SectionResponse build() {
+            return new SectionResponse(this);
+        }
     }
 }

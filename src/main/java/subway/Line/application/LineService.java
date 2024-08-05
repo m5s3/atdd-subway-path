@@ -40,7 +40,12 @@ public class LineService {
     }
 
     private LineResponse createLineResponse(Line line) {
-        return new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections()));
+        return new LineResponse.Builder(line.getId())
+                .name(line.getName())
+                .color(line.getColor())
+                .distance(line.getDistance())
+                .sections(createSectionsResponse(line.getSections()))
+                .build();
     }
 
     private Line toEntity(LineRequest lineRequest) {
@@ -53,20 +58,23 @@ public class LineService {
         List<Line> lines = lineRepository.findAll();
 
         return lines.stream()
-                .map(line -> new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections())))
+                .map(this::createLineResponse)
                 .collect(Collectors.toList());
     }
 
     public LineResponse findLine(Long lineId) {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 지하철 노선은 존재하지 않습니다. id=" + lineId));
-        return new LineResponse(line.getId(), line.getName(), line.getColor(), line.getDistance(), createSectionsResponse(line.getSections()));
+        return createLineResponse(line);
     }
 
     private SectionsResponse createSectionsResponse(Sections sections) {
         return new SectionsResponse(sections.getSections().stream()
-                .map(section -> new SectionResponse(section.getId(), section.getUpStationId(),
-                        section.getDownStationId(), section.getDistance()))
+                .map(section -> new SectionResponse.Builder(section.getId())
+                        .upStationId(section.getUpStationId())
+                        .downStationId(section.getDownStationId())
+                        .distance(section.getDistance())
+                        .build())
                 .collect(Collectors.toList()));
     }
 
