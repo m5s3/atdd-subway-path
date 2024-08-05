@@ -78,11 +78,6 @@ public class LineService {
                 .collect(Collectors.toList()));
     }
 
-    private Map<Long, Station> toMap(List<Station> stations) {
-        return stations.stream()
-                .collect(Collectors.toMap(Station::getId, station -> station));
-    }
-
     @Transactional
     public void updateLine(Long lineId, LineRequest lineRequest) {
         Line line = lineRepository.findById(lineId)
