@@ -1,9 +1,5 @@
 package subway.Line.presentation.dto;
 
-import java.util.List;
-import subway.Line.domain.Sections;
-import subway.Station.presentation.dto.StationResponse;
-
 public class LineResponse {
 
     private Long id;
