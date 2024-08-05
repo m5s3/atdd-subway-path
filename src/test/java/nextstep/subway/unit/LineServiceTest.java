@@ -1,5 +1,10 @@
 package nextstep.subway.unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,13 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 import subway.Line.application.LineService;
 import subway.Line.domain.Line;
 import subway.Line.domain.Section;
+import subway.Line.domain.Sections;
 import subway.Line.infrastructure.LineRepository;
 import subway.Line.presentation.dto.SectionRequest;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
+import subway.SubwayApplication;
+import subway.global.exception.BadRequestException;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
+@SpringBootTest(classes = SubwayApplication.class)
 @Transactional
 public class LineServiceTest {
     @Autowired
@@ -50,9 +58,51 @@ public class LineServiceTest {
 
         // when
         // lineService.addSection 호출
-        lineService.addSection(신분당선.getId(), new SectionRequest(강남역.getId(), 신사역.getId(), 7));
+        stationRepository.save(논현역);
+        lineService.addSection(신분당선.getId(), new SectionRequest(신사역.getId(), 논현역.getId(), 7));
 
         // then
         // line.getSections 메서드를 통해 검증
+        Sections sections = 신분당선.getSections();
+        assertThat(sections.size()).isEqualTo(2);
+        assertThat(sections.getSections().get(0).getDistance()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("노선에 구간을 처음 지점에 추가 할 수 있다.")
+    void addSection_노선에_처음_구간_추가() {
+        // given
+        // stationRepository와 lineRepository를 활용하여 초기값 셋팅
+        stationRepository.save(논현역);
+        stationRepository.save(강남역);
+        lineRepository.save(신분당선);
+        lineService.addSection(신분당선.getId(), new SectionRequest(논현역.getId(), 강남역.getId(), 3));
+
+        // when
+        // lineService.addSection 호출
+        stationRepository.save(신사역);
+        lineService.addSection(신분당선.getId(), new SectionRequest(신사역.getId(), 논현역.getId(), 7));
+
+        // then
+        // line.getSections 메서드를 통해 검증
+        Sections sections = 신분당선.getSections();
+        assertThat(sections.getSections().size()).isEqualTo(2);
+        assertThat(sections.calculateDistance()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("노선에 똑같은 역은 추가할 수 없다")
+    void addSection_노선_이미_등록된_역은_추가_할_수_없다() {
+        // given
+        stationRepository.save(논현역);
+        stationRepository.save(강남역);
+        lineRepository.save(신분당선);
+        lineService.addSection(신분당선.getId(), new SectionRequest(논현역.getId(), 강남역.getId(), 3));
+
+        // when & then
+        stationRepository.save(강남역);
+        assertThatThrownBy(() -> lineService.addSection(신분당선.getId(), new SectionRequest(논현역.getId(), 강남역.getId(), 3)))
+                .isInstanceOf(BadRequestException.class);
     }
 }
+

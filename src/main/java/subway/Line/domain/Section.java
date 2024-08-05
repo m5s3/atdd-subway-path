@@ -48,6 +48,22 @@ public class Section {
         return downStationId.equals(stationId);
     }
 
+    public boolean isUpStationId(Long stationId) {
+        return upStationId.equals(stationId);
+    }
+
+    public void updateDownStationId(Long downStationId) {
+        this.downStationId = downStationId;
+    }
+
+    public void updateUpStationId(Long upStationId) {
+        this.upStationId = upStationId;
+    }
+
+    public void decreaseDistance(Section section) {
+        this.distance = distance - section.getDistance();
+    }
+
     public void remove() {
         this.line = null;
     }

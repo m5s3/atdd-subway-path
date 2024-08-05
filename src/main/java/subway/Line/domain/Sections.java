@@ -1,14 +1,15 @@
 package subway.Line.domain;
 
+import static subway.global.exception.ExceptionCode.INVALID_DUPLICATE_SECTION;
 import static subway.global.exception.ExceptionCode.INVALID_NO_EXIST_SECTION;
 import static subway.global.exception.ExceptionCode.INVALID_SECTION_MIN;
 import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import subway.global.exception.BadRequestException;
 
@@ -24,8 +25,46 @@ public class Sections {
         this.sections = sections;
     }
 
-    public void addSection(Section section) {
-        this.sections.add(section);
+    public void addSection(Section newSection) {
+        validateSection(newSection);
+        if (this.sections.isEmpty()) {
+            this.sections.add(newSection);
+            return;
+        }
+
+        Optional<Section> optionalAfterSection = this.sections.stream()
+                .filter(section -> section.isUpStationId(newSection.getUpStationId()))
+                .findAny();
+
+        if (optionalAfterSection.isPresent()) {
+            Section afterSection = optionalAfterSection.get();
+            afterSection.updateDownStationId(newSection.getUpStationId());
+            afterSection.decreaseDistance(newSection);
+        }
+
+        if(!optionalAfterSection.isPresent()) {
+            Optional<Section> optionalBeforeSection = this.sections.stream()
+                    .filter(section -> section.isDownStationId(newSection.getUpStationId()))
+                    .findAny();
+
+            if (optionalBeforeSection.isPresent()) {
+                Section beforeSection = optionalBeforeSection.get();
+                beforeSection.updateUpStationId(newSection.getDownStationId());
+            }
+        }
+
+        this.sections.add(newSection);
+    }
+
+    private void validateSection(Section newSection) {
+        this.sections.forEach(section -> {
+            if(
+                    section.isUpStationId(newSection.getUpStationId()) &&
+                            section.isDownStationId(newSection.getDownStationId())
+            ) {
+               throw new BadRequestException(INVALID_DUPLICATE_SECTION);
+            }
+        });
     }
 
     public void deleteSection(Long stationId) {
@@ -65,5 +104,9 @@ public class Sections {
 
     public List<Section> getSections() {
         return sections;
+    }
+
+    public int size() {
+        return sections.size();
     }
 }

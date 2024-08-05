@@ -1,23 +1,11 @@
 package subway.Line.domain;
 
-import static subway.global.exception.ExceptionCode.INVALID_DELETE_DOWNSTATION;
-import static subway.global.exception.ExceptionCode.INVALID_DOWNSTATION_NOT_NEW_EQUAL_DOWNSTATION;
-import static subway.global.exception.ExceptionCode.INVALID_DOWNSTATION_TO_BE_NEW_UPSTATION;
-import static subway.global.exception.ExceptionCode.INVALID_SECTION_MIN;
-import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import subway.global.exception.BadRequestException;
 
 @Entity
 public class Line {

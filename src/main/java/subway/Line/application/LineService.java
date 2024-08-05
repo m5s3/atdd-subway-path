@@ -1,7 +1,6 @@
 package subway.Line.application;
 
 import static subway.global.exception.ExceptionCode.NOT_FOUND_LINE;
-import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import subway.Line.domain.Line;
-import subway.Line.domain.Section;
 import subway.Line.domain.Sections;
 import subway.Line.presentation.dto.LineRequest;
 import subway.Line.presentation.dto.LineResponse;
@@ -20,7 +18,6 @@ import subway.Line.presentation.dto.SectionResponse;
 import subway.Line.presentation.dto.SectionsResponse;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
-import subway.Station.presentation.dto.StationResponse;
 import subway.global.exception.BadRequestException;
 
 @Service
