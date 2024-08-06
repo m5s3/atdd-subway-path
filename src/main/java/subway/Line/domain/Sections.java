@@ -25,7 +25,7 @@ public class Sections {
         this.sections = sections;
     }
 
-    public void addSection(Section newSection) {
+    public void add(Section newSection) {
         validateSection(newSection);
         if (this.sections.isEmpty()) {
             this.sections.add(newSection);
@@ -37,23 +37,31 @@ public class Sections {
                 .findAny();
 
         if (optionalAfterSection.isPresent()) {
-            Section afterSection = optionalAfterSection.get();
-            afterSection.updateDownStationId(newSection.getUpStationId());
-            afterSection.decreaseDistance(newSection);
+            appendFirst(newSection, optionalAfterSection);
         }
 
         if(!optionalAfterSection.isPresent()) {
-            Optional<Section> optionalBeforeSection = this.sections.stream()
-                    .filter(section -> section.isDownStationId(newSection.getUpStationId()))
-                    .findAny();
-
-            if (optionalBeforeSection.isPresent()) {
-                Section beforeSection = optionalBeforeSection.get();
-                beforeSection.updateUpStationId(newSection.getDownStationId());
-            }
+            appendCenter(newSection);
         }
 
         this.sections.add(newSection);
+    }
+
+    private void appendCenter(Section newSection) {
+        Optional<Section> optionalBeforeSection = this.sections.stream()
+                .filter(section -> section.isDownStationId(newSection.getUpStationId()))
+                .findAny();
+
+        if (optionalBeforeSection.isPresent()) {
+            Section beforeSection = optionalBeforeSection.get();
+            beforeSection.updateUpStationId(newSection.getDownStationId());
+        }
+    }
+
+    private static void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
+        Section afterSection = optionalAfterSection.get();
+        afterSection.updateDownStationId(newSection.getUpStationId());
+        afterSection.decreaseDistance(newSection);
     }
 
     private void validateSection(Section newSection) {
