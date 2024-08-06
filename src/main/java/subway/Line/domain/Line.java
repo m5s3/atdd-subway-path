@@ -1,12 +1,14 @@
 package subway.Line.domain;
 
 import java.util.Objects;
+import java.util.Stack;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import subway.Station.domain.Station;
 
 @Entity
 public class Line {
@@ -60,12 +62,12 @@ public class Line {
         this.color = color;
     }
 
-    public void addSection(Long upStationId, Long downStationId, int distance) {
-        this.sections.add(new Section(upStationId, downStationId, distance, this));
+    public void addSection(Station upStation, Station downStation, int distance) {
+        this.sections.add(new Section(upStation, downStation, distance, this));
     }
 
-    public void deleteSection(Long stationId) {
-        this.sections.deleteSection(stationId);
+    public void deleteSection(Station station) {
+        this.sections.deleteSection(station);
     }
 
     public int getDistance() {

@@ -1,8 +1,10 @@
 package subway.Line.application;
 
 import static subway.global.exception.ExceptionCode.NOT_FOUND_LINE;
+import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import subway.Line.infrastructure.LineRepository;
 import subway.Line.presentation.dto.SectionRequest;
 import subway.Line.presentation.dto.SectionResponse;
 import subway.Line.presentation.dto.SectionsResponse;
+import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.global.exception.CustomException;
 
@@ -32,7 +35,13 @@ public class LineService {
     @Transactional
     public LineResponse saveLine(LineRequest lineRequest) {
         Line line = lineRepository.save(toEntity(lineRequest));
-        line.addSection(lineRequest.getUpStationId(), lineRequest.getDownStationId(), lineRequest.getDistance());
+        Station upStation = this.stationRepository.findById(lineRequest.getUpStationId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+        Station downStation = this.stationRepository.findById(lineRequest.getDownStationId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+
+        line.addSection(upStation, downStation, lineRequest.getDistance());
+
         return createLineResponse(line);
     }
 
@@ -67,7 +76,8 @@ public class LineService {
 
     private SectionsResponse createSectionsResponse(Sections sections) {
         return new SectionsResponse(sections.getSections().stream()
-                .map(section -> new SectionResponse.Builder(section.getId())
+                .map(section -> new SectionResponse.Builder()
+                        .id(section.getId())
                         .upStationId(section.getUpStationId())
                         .downStationId(section.getDownStationId())
                         .distance(section.getDistance())
@@ -93,7 +103,13 @@ public class LineService {
     public void addSection(Long lineId, SectionRequest sectionRequest) {
         Line line = this.lineRepository.findById(lineId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_LINE));
-        line.addSection(sectionRequest.getUpStationId(), sectionRequest.getDownStationId(), sectionRequest.getDistance());
+
+        Station upStation = this.stationRepository.findById(sectionRequest.getUpStationId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+        Station downStation = this.stationRepository.findById(sectionRequest.getDownStationId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+
+        line.addSection(upStation, downStation, sectionRequest.getDistance());
     }
 
     @Transactional
@@ -101,6 +117,9 @@ public class LineService {
         Line line = this.lineRepository.findById(lineId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_LINE));
 
-        line.deleteSection(stationId);
+        Station station = this.stationRepository.findById(stationId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+
+        line.deleteSection(station);
     }
 }

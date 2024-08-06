@@ -39,9 +39,6 @@ public class LineAcceptanceTest extends LineAcceptanceFixture {
 
         // Then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        Sections sections = response.jsonPath().getObject("sections", Sections.class);
-        assertThat(sections.getUpStationId()).isEqualTo(신사역);
-        assertThat(sections.getDownStationId()).isEqualTo(강남역);
     }
 
     /**

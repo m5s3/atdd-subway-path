@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import subway.Station.domain.Station;
 import subway.global.exception.CustomException;
 
 @Embeddable
@@ -33,7 +34,7 @@ public class Sections {
         }
 
         Optional<Section> optionalAfterSection = this.sections.stream()
-                .filter(section -> section.isUpStationId(newSection.getUpStationId()))
+                .filter(section -> section.isUpStation(newSection.getUpStation()))
                 .findAny();
 
         if (optionalAfterSection.isPresent()) {
@@ -49,34 +50,34 @@ public class Sections {
 
     private void appendCenter(Section newSection) {
         Optional<Section> optionalBeforeSection = this.sections.stream()
-                .filter(section -> section.isDownStationId(newSection.getUpStationId()))
+                .filter(section -> section.isDownStation(newSection.getUpStation()))
                 .findAny();
 
         if (optionalBeforeSection.isPresent()) {
             Section beforeSection = optionalBeforeSection.get();
-            beforeSection.updateUpStationId(newSection.getDownStationId());
+            beforeSection.updateUpStation(newSection.getDownStation());
         }
     }
 
     private static void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
         Section afterSection = optionalAfterSection.get();
-        afterSection.updateDownStationId(newSection.getUpStationId());
+        afterSection.updateDownStation(newSection.getUpStation());
         afterSection.decreaseDistance(newSection);
     }
 
     private void validateSection(Section newSection) {
         this.sections.forEach(section -> {
             if(
-                    section.isUpStationId(newSection.getUpStationId()) &&
-                            section.isDownStationId(newSection.getDownStationId())
+                    section.isUpStation(newSection.getUpStation()) &&
+                            section.isDownStation(newSection.getDownStation())
             ) {
                throw new CustomException(INVALID_DUPLICATE_SECTION);
             }
         });
     }
 
-    public void deleteSection(Long stationId) {
-        Section deleteSection = sections.stream().filter(section -> section.isDownStationId(stationId))
+    public void deleteSection(Station station) {
+        Section deleteSection = sections.stream().filter(section -> section.isDownStation(station))
                 .findAny()
                 .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
 
@@ -92,14 +93,14 @@ public class Sections {
         if (this.sections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(0).getUpStationId();
+        return this.sections.get(0).getUpStation().getId();
     }
 
     public Long getDownStationId() {
         if (this.sections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(this.sections.size() - 1).getDownStationId();
+        return this.sections.get(this.sections.size() - 1).getDownStation().getId();
     }
 
     public int calculateDistance() {

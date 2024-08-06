@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import subway.Station.domain.Station;
 
 @Entity
 public class Section {
@@ -14,8 +16,12 @@ public class Section {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long upStationId;
-    private Long downStationId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "up_station_id")
+    private Station upStation;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "down_station_id")
+    private Station downStation;
     private int distance;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,40 +30,40 @@ public class Section {
 
     public Section() {}
 
-    public Section(Long upStationId, Long downStationId, int distance, Line line) {
-        this(null, upStationId, downStationId, distance, line);
+    public Section(Station upStation, Station downStation, int distance, Line line) {
+        this(null, upStation, downStation, distance, line);
     }
 
-    public Section(Long id, Long upStationId, Long downStationId, int distance, Line line) {
+    public Section(Long id, Station upStation, Station downStation, int distance, Line line) {
         this.id = id;
-        this.upStationId = upStationId;
-        this.downStationId = downStationId;
+        this.upStation = upStation;
+        this.downStation = downStation;
         this.distance = distance;
         this.line = line;
     }
 
-    public Long getUpStationId() {
-        return upStationId;
+    public Station getUpStation() {
+        return upStation;
     }
 
-    public Long getDownStationId() {
-        return downStationId;
+    public Station getDownStation() {
+        return downStation;
     }
 
-    public boolean isDownStationId(Long stationId) {
-        return downStationId.equals(stationId);
+    public boolean isDownStation(Station station) {
+        return downStation == station;
     }
 
-    public boolean isUpStationId(Long stationId) {
-        return upStationId.equals(stationId);
+    public boolean isUpStation(Station station) {
+        return upStation == station;
     }
 
-    public void updateDownStationId(Long downStationId) {
-        this.downStationId = downStationId;
+    public void updateDownStation(Station downStation) {
+        this.downStation = downStation;
     }
 
-    public void updateUpStationId(Long upStationId) {
-        this.upStationId = upStationId;
+    public void updateUpStation(Station upStation) {
+        this.upStation = upStation;
     }
 
     public void decreaseDistance(Section section) {
@@ -76,14 +82,11 @@ public class Section {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "Section{" +
-                "id=" + id +
-                ", upStationId=" + upStationId +
-                ", downStationId=" + downStationId +
-                ", distance=" + distance +
-                ", line=" + line +
-                '}';
+    public Long getUpStationId() {
+        return upStation.getId();
+    }
+
+    public Long getDownStationId() {
+        return downStation.getId();
     }
 }

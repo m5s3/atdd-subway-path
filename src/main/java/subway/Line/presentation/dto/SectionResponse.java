@@ -32,13 +32,14 @@ public class SectionResponse {
     }
 
     public static class Builder {
-        private final Long id;
+        private Long id;
         private Long upStationId;
         private Long downStationId;
         private int distance;
 
-        public Builder(Long id) {
+        public Builder id(Long id) {
             this.id = id;
+            return this;
         }
 
         public Builder upStationId(Long upStationId) {

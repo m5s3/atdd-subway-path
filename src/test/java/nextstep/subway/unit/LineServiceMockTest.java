@@ -49,13 +49,13 @@ public class LineServiceMockTest {
         Mockito.lenient().when(stationService.findById(신사역_id)).thenReturn(신사역);
         Mockito.lenient().when(stationService.findById(강남역_id)).thenReturn(강남역);
 
-        신분당선.addSection(신사역.getId(), 강남역.getId(), 7);
+        신분당선.addSection(신사역, 강남역, 7);
 
         // when
         // lineService.addSection 호출
         Long 논현역_id = 3L;
         Station 논현역 = new Station(논현역_id, "논현역");
-        신분당선.addSection(신사역.getId(), 논현역.getId(), 7);
+        신분당선.addSection(신사역, 논현역, 7);
 
         // then
         // lineService.findLineById 메서드를 통해 검증

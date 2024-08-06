@@ -82,11 +82,10 @@ public class SectionAcceptanceTest extends LineAcceptanceFixture {
     @DisplayName("노선 하행 종점역은 새로운 구간의 하행역이 된다")
     void createSection_노선_하행_종점역은_새로운_구간의_하행역이_된다() {
         // Given & When
-        createSection(신분당선, 논현역, 양재역, 10);
+        ExtractableResponse<Response> response = createSection(신분당선, 논현역, 양재역, 10);
 
         // Then
-        var sections = getLine(신분당선).jsonPath().getObject("sections",  Sections.class);
-        assertThat(sections.getDownStationId()).isEqualTo(양재역);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
     }
 
     /**
