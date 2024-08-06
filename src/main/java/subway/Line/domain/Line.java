@@ -1,5 +1,6 @@
 package subway.Line.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,10 +47,16 @@ public class Line {
     }
 
     public void updateName(String name) {
+        if (Objects.isNull(name)) {
+            return;
+        }
         this.name = name;
     }
 
     public void updateColor(String color) {
+        if (Objects.isNull(color)) {
+            return;
+        }
         this.color = color;
     }
 

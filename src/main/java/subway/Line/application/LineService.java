@@ -83,14 +83,8 @@ public class LineService {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new BadRequestException(NOT_FOUND_LINE));
 
-        String name = lineRequest.getName();
-        if (Objects.nonNull(name)) {
-            line.updateName(name);
-        }
-        String color = lineRequest.getColor();
-        if (Objects.nonNull(color)) {
-            line.updateColor(color);
-        }
+        line.updateName(lineRequest.getName());
+        line.updateColor(lineRequest.getColor());
     }
 
     @Transactional
