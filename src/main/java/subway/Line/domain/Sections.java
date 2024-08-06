@@ -93,14 +93,14 @@ public class Sections {
         if (this.sections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(0).getUpStation().getId();
+        return this.sections.get(0).getUpStationId();
     }
 
     public Long getDownStationId() {
         if (this.sections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(this.sections.size() - 1).getDownStation().getId();
+        return this.sections.get(this.sections.size() - 1).getDownStationId();
     }
 
     public int calculateDistance() {
