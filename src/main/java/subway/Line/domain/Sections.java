@@ -11,7 +11,7 @@ import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import subway.global.exception.BadRequestException;
+import subway.global.exception.CustomException;
 
 @Embeddable
 public class Sections {
@@ -70,7 +70,7 @@ public class Sections {
                     section.isUpStationId(newSection.getUpStationId()) &&
                             section.isDownStationId(newSection.getDownStationId())
             ) {
-               throw new BadRequestException(INVALID_DUPLICATE_SECTION);
+               throw new CustomException(INVALID_DUPLICATE_SECTION);
             }
         });
     }
@@ -78,10 +78,10 @@ public class Sections {
     public void deleteSection(Long stationId) {
         Section deleteSection = sections.stream().filter(section -> section.isDownStationId(stationId))
                 .findAny()
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_STATION));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
 
         if (this.sections.size() < 2) {
-            throw new BadRequestException(INVALID_SECTION_MIN);
+            throw new CustomException(INVALID_SECTION_MIN);
         }
 
         deleteSection.remove();
@@ -90,14 +90,14 @@ public class Sections {
 
     public Long getUpStationId() {
         if (this.sections.isEmpty()) {
-            throw new BadRequestException(INVALID_NO_EXIST_SECTION);
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
         return this.sections.get(0).getUpStationId();
     }
 
     public Long getDownStationId() {
         if (this.sections.isEmpty()) {
-            throw new BadRequestException(INVALID_NO_EXIST_SECTION);
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
         return this.sections.get(this.sections.size() - 1).getDownStationId();
     }

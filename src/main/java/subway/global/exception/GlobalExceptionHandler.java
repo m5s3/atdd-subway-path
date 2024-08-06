@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({RuntimeException.class, IllegalArgumentException.class})
-    public ResponseEntity<ExceptionResponse> handleBadRequestException(BadRequestException e) {
+    public ResponseEntity<ExceptionResponse> handleBadRequestException(CustomException e) {
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse(e.getCode(), e.getMessage()));
     }

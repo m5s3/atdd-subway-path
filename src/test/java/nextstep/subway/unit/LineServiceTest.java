@@ -3,8 +3,6 @@ package nextstep.subway.unit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +11,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import subway.Line.application.LineService;
 import subway.Line.domain.Line;
-import subway.Line.domain.Section;
 import subway.Line.domain.Sections;
 import subway.Line.infrastructure.LineRepository;
 import subway.Line.presentation.dto.SectionRequest;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.SubwayApplication;
-import subway.global.exception.BadRequestException;
+import subway.global.exception.CustomException;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest(classes = SubwayApplication.class)
@@ -102,7 +99,7 @@ public class LineServiceTest {
         // when & then
         stationRepository.save(강남역);
         assertThatThrownBy(() -> lineService.addSection(신분당선.getId(), new SectionRequest(논현역.getId(), 강남역.getId(), 3)))
-                .isInstanceOf(BadRequestException.class);
+                .isInstanceOf(CustomException.class);
     }
 }
 

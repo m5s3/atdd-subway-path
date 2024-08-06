@@ -1,11 +1,11 @@
 package subway.global.exception;
 
-public class BadRequestException extends RuntimeException {
+public class CustomException extends RuntimeException {
 
     private final int code;
     private final String message;
 
-    public BadRequestException(ExceptionCode exceptionCode) {
+    public CustomException(ExceptionCode exceptionCode) {
         this.code = exceptionCode.getCode();
         this.message = exceptionCode.getMessage();
     }

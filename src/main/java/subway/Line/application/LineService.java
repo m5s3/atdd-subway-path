@@ -3,8 +3,6 @@ package subway.Line.application;
 import static subway.global.exception.ExceptionCode.NOT_FOUND_LINE;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +14,8 @@ import subway.Line.infrastructure.LineRepository;
 import subway.Line.presentation.dto.SectionRequest;
 import subway.Line.presentation.dto.SectionResponse;
 import subway.Line.presentation.dto.SectionsResponse;
-import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
-import subway.global.exception.BadRequestException;
+import subway.global.exception.CustomException;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,7 +78,7 @@ public class LineService {
     @Transactional
     public void updateLine(Long lineId, LineRequest lineRequest) {
         Line line = lineRepository.findById(lineId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_LINE));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_LINE));
 
         line.updateName(lineRequest.getName());
         line.updateColor(lineRequest.getColor());
@@ -95,14 +92,14 @@ public class LineService {
     @Transactional
     public void addSection(Long lineId, SectionRequest sectionRequest) {
         Line line = this.lineRepository.findById(lineId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_LINE));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_LINE));
         line.addSection(sectionRequest.getUpStationId(), sectionRequest.getDownStationId(), sectionRequest.getDistance());
     }
 
     @Transactional
     public void deleteSection(Long lineId, Long stationId) {
         Line line = this.lineRepository.findById(lineId)
-                .orElseThrow(() -> new BadRequestException(NOT_FOUND_LINE));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_LINE));
 
         line.deleteSection(stationId);
     }
