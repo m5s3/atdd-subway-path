@@ -8,6 +8,7 @@ import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -35,58 +36,100 @@ public class Sections {
 
         Optional<Section> optionalAfterSection = this.sections.stream()
                 .filter(section -> section.isUpStation(newSection.getUpStation()))
-                .findAny();
+                .findFirst();
 
-        if (optionalAfterSection.isPresent()) {
-            appendFirst(newSection, optionalAfterSection);
+        if (isUpStation(newSection.getUpStation()) &&
+                optionalAfterSection.isPresent()) {
+            appendFirst(optionalAfterSection.get(), newSection);
+            return;
         }
 
-        if(!optionalAfterSection.isPresent()) {
-            appendCenter(newSection);
+        if (!isUpStation(newSection.getUpStation()) &&
+        optionalAfterSection.isPresent()) {
+            appendCenter(optionalAfterSection.get(), newSection);
         }
 
         this.sections.add(newSection);
     }
 
-    private void appendCenter(Section newSection) {
-        Optional<Section> optionalBeforeSection = this.sections.stream()
-                .filter(section -> section.isDownStation(newSection.getUpStation()))
-                .findAny();
-
-        if (optionalBeforeSection.isPresent()) {
-            Section beforeSection = optionalBeforeSection.get();
-            beforeSection.updateUpStation(newSection.getDownStation());
-        }
+    private void appendCenter(Section afterSection, Section newSection) {
+        afterSection.updateUpStation(newSection.getDownStation());
+        afterSection.decreaseDistance(newSection);
+        this.sections.add(this.sections.indexOf(afterSection), newSection);
     }
 
-    private static void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
-        Section afterSection = optionalAfterSection.get();
+    private void appendFirst(Section afterSection, Section newSection) {
         afterSection.updateDownStation(newSection.getUpStation());
-        afterSection.decreaseDistance(newSection);
+        sections.add(0, newSection);
     }
 
     private void validateSection(Section newSection) {
-        this.sections.forEach(section -> {
-            if(
-                    section.isUpStation(newSection.getUpStation()) &&
-                            section.isDownStation(newSection.getDownStation())
-            ) {
-               throw new CustomException(INVALID_DUPLICATE_SECTION);
-            }
-        });
+        boolean isDuplicatedSection = this.sections.stream()
+                .anyMatch(section -> section.isUpStation((newSection.getUpStation())) && section.isDownStation(
+                        newSection.getDownStation()));
+
+        if (isDuplicatedSection) {
+            throw new CustomException(INVALID_DUPLICATE_SECTION);
+        }
     }
 
-    public void deleteSection(Station station) {
-        Section deleteSection = sections.stream().filter(section -> section.isDownStation(station))
-                .findAny()
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+    private boolean isDownStation(Station station) {
+        if (this.sections.isEmpty()) {
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
+        }
+        return this.sections.get(this.sections.size() - 1).isDownStation(station);
+    }
 
+
+    public void deleteSection(Station station) {
         if (this.sections.size() < 2) {
             throw new CustomException(INVALID_SECTION_MIN);
         }
 
-        deleteSection.remove();
-        this.sections.remove(deleteSection);
+        if (isCenter(station)) {
+            List<Section> findSections = findSections(station);
+            mergeSection(findSections.get(0), findSections.get(1));
+            return;
+        }
+        Optional<Section> optionalFirstSection = this.sections.stream()
+                .filter(section -> section.isUpStation(station))
+                .findFirst();
+
+        optionalFirstSection.ifPresent(this::removeSection);
+
+        Optional<Section> optionalLastSection = this.sections.stream()
+                .filter(section -> section.isDownStation(station))
+                .findFirst();
+
+        optionalLastSection.ifPresent(this::removeSection);
+    }
+
+    private void removeSection(Section section) {
+        section.remove();
+        this.sections.remove(section);
+    }
+
+    private void mergeSection(Section beforeSection, Section afterSection) {
+        beforeSection.updateDownStation(afterSection.getDownStation());
+        beforeSection.increaseDistance(afterSection);
+        afterSection.remove();
+        this.sections.remove(afterSection);
+    }
+
+    private List<Section> findSections(Station station) {
+        return this.sections.stream().filter(section -> section.isUpStation(station) || section.isDownStation(station))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isCenter(Station station) {
+        return !isUpStation(station) && !isDownStation(station);
+    }
+
+    private boolean isUpStation(Station station) {
+        if (this.sections.isEmpty()) {
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
+        }
+        return this.sections.get(0).isUpStation(station);
     }
 
     public Long getUpStationId() {
