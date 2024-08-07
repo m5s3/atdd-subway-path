@@ -66,14 +66,13 @@ public class Sections {
     }
 
     private void validateSection(Section newSection) {
-        this.sections.forEach(section -> {
-            if(
-                    section.isUpStation(newSection.getUpStation()) &&
-                            section.isDownStation(newSection.getDownStation())
-            ) {
-               throw new CustomException(INVALID_DUPLICATE_SECTION);
-            }
-        });
+        boolean isDuplicatedSection = this.sections.stream()
+                .anyMatch(section -> section.isUpStation((newSection.getUpStation())) && section.isDownStation(
+                        newSection.getDownStation()));
+
+        if (isDuplicatedSection) {
+            throw new CustomException(INVALID_DUPLICATE_SECTION);
+        }
     }
 
     public void deleteSection(Station station) {
