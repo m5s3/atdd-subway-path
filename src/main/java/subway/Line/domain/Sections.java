@@ -40,32 +40,25 @@ public class Sections {
 
         if (isUpStation(newSection.getUpStation()) &&
                 optionalAfterSection.isPresent()) {
-            appendFirst(newSection, optionalAfterSection);
+            appendFirst(optionalAfterSection.get(), newSection);
             return;
         }
 
-        if (optionalAfterSection.isEmpty()) {
-            appendCenter(newSection);
-            return;
+        if (!isUpStation(newSection.getUpStation()) &&
+        optionalAfterSection.isPresent()) {
+            appendCenter(optionalAfterSection.get(), newSection);
         }
+
         this.sections.add(newSection);
     }
 
-    private void appendCenter(Section newSection) {
-        Optional<Section> optionalBeforeSection = this.sections.stream()
-                .filter(section -> section.isUpStation(newSection.getUpStation()))
-                .findFirst();
-
-        if (optionalBeforeSection.isPresent()) {
-            Section beforeSection = optionalBeforeSection.get();
-            beforeSection.updateUpStation(newSection.getDownStation());
-            beforeSection.decreaseDistance(newSection);
-            this.sections.add(this.sections.indexOf(beforeSection), newSection);
-        }
+    private void appendCenter(Section afterSection, Section newSection) {
+        afterSection.updateUpStation(newSection.getDownStation());
+        afterSection.decreaseDistance(newSection);
+        this.sections.add(this.sections.indexOf(afterSection), newSection);
     }
 
-    private void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
-        Section afterSection = optionalAfterSection.get();
+    private void appendFirst(Section afterSection, Section newSection) {
         afterSection.updateDownStation(newSection.getUpStation());
         sections.add(0, newSection);
     }
@@ -80,17 +73,56 @@ public class Sections {
         }
     }
 
-    public void deleteSection(Station station) {
-        Section deleteSection = sections.stream().filter(section -> section.isDownStation(station))
-                .findAny()
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+    private boolean isDownStation(Station station) {
+        if (this.sections.isEmpty()) {
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
+        }
+        return this.sections.get(this.sections.size() - 1).isDownStation(station);
+    }
 
+
+    public void deleteSection(Station station) {
         if (this.sections.size() < 2) {
             throw new CustomException(INVALID_SECTION_MIN);
         }
 
-        deleteSection.remove();
-        this.sections.remove(deleteSection);
+        if (isCenter(station)) {
+            List<Section> findSections = findSections(station);
+            mergeSection(findSections.get(0), findSections.get(1));
+            return;
+        }
+        Optional<Section> optionalFirstSection = this.sections.stream()
+                .filter(section -> section.isUpStation(station))
+                .findFirst();
+
+        optionalFirstSection.ifPresent(this::removeSection);
+
+        Optional<Section> optionalLastSection = this.sections.stream()
+                .filter(section -> section.isDownStation(station))
+                .findFirst();
+
+        optionalLastSection.ifPresent(this::removeSection);
+    }
+
+    private void removeSection(Section section) {
+        section.remove();
+        this.sections.remove(section);
+    }
+
+    private void mergeSection(Section beforeSection, Section afterSection) {
+        beforeSection.updateDownStation(afterSection.getDownStation());
+        beforeSection.increaseDistance(afterSection);
+        afterSection.remove();
+        this.sections.remove(afterSection);
+    }
+
+    private List<Section> findSections(Station station) {
+        return this.sections.stream().filter(section -> section.isUpStation(station) || section.isDownStation(station))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isCenter(Station station) {
+        return !isUpStation(station) && !isDownStation(station);
     }
 
     private boolean isUpStation(Station station) {

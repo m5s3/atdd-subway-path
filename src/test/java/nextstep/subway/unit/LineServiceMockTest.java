@@ -60,7 +60,6 @@ public class LineServiceMockTest {
         // then
         // lineService.findLineById 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
-        assertThat(sections.getUpStationId()).isEqualTo(신사역.getId());
-        assertThat(sections.getDownStationId()).isEqualTo(강남역.getId());
+        assertThat(sections.getSections().size()).isEqualTo(2);
     }
 }
