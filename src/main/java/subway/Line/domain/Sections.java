@@ -47,6 +47,7 @@ public class Sections {
         if (!isUpStation(newSection.getUpStation()) &&
         optionalAfterSection.isPresent()) {
             appendCenter(optionalAfterSection.get(), newSection);
+            return;
         }
 
         this.sections.add(newSection);
@@ -87,8 +88,7 @@ public class Sections {
         }
 
         if (isCenter(station)) {
-            List<Section> findSections = findSections(station);
-            mergeSection(findSections.get(0), findSections.get(1));
+            mergeSection(findBeforeSection(station), findAfterSection(station));
             return;
         }
         Optional<Section> optionalFirstSection = this.sections.stream()
@@ -116,9 +116,16 @@ public class Sections {
         this.sections.remove(afterSection);
     }
 
-    private List<Section> findSections(Station station) {
-        return this.sections.stream().filter(section -> section.isUpStation(station) || section.isDownStation(station))
-                .collect(Collectors.toList());
+    private Section findBeforeSection(Station station) {
+        return this.sections.stream().filter(section -> section.isDownStation(station)).findFirst()
+                .orElseThrow(() -> new CustomException(
+                        INVALID_NO_EXIST_SECTION));
+    }
+
+    private Section findAfterSection(Station station) {
+        return this.sections.stream().filter(section -> section.isUpStation(station)).findFirst()
+                .orElseThrow(() -> new CustomException(
+                        INVALID_NO_EXIST_SECTION));
     }
 
     private boolean isCenter(Station station) {
