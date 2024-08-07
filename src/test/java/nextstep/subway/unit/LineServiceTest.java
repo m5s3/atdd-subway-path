@@ -65,7 +65,7 @@ public class LineServiceTest extends LineFixture {
         // when
         // lineService.addSection 호출
         stationRepository.save(신사역);
-        lineService.addSection(신분당선.getId(), new SectionRequest(신사역.getId(), 논현역.getId(), 7));
+        lineService.addSection(신분당선.getId(), new SectionRequest(논현역.getId(), 신사역.getId(), 7));
 
         // then
         // line.getSections 메서드를 통해 검증

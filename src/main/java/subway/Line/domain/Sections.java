@@ -35,10 +35,11 @@ public class Sections {
         }
 
         Optional<Section> optionalAfterSection = this.sections.stream()
-                .filter(section -> section.isUpStation(newSection.getDownStation()))
+                .filter(section -> section.isUpStation(newSection.getUpStation()))
                 .findFirst();
 
-        if (optionalAfterSection.isPresent()) {
+        if (isUpStation(newSection.getUpStation()) &&
+                optionalAfterSection.isPresent()) {
             appendFirst(newSection, optionalAfterSection);
             return;
         }
@@ -90,6 +91,13 @@ public class Sections {
 
         deleteSection.remove();
         this.sections.remove(deleteSection);
+    }
+
+    private boolean isUpStation(Station station) {
+        if (this.sections.isEmpty()) {
+            throw new CustomException(INVALID_NO_EXIST_SECTION);
+        }
+        return this.sections.get(0).isUpStation(station);
     }
 
     public Long getUpStationId() {
