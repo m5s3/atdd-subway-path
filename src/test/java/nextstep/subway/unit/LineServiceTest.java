@@ -22,26 +22,13 @@ import subway.global.exception.CustomException;
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest(classes = SubwayApplication.class)
 @Transactional
-public class LineServiceTest {
+public class LineServiceTest extends LineFixture {
     @Autowired
     private StationRepository stationRepository;
     @Autowired
     private LineRepository lineRepository;
     @Autowired
     private LineService lineService;
-
-    private Line 신분당선;
-    private Station 신사역;
-    private Station 강남역;
-    private Station 논현역;
-
-    @BeforeEach
-    void setUp() {
-        신분당선 = new Line("신분당선", "bg-red-600");
-        신사역 = new Station("신사역");
-        강남역 = new Station("강남역");
-        논현역 = new Station("논현역");
-    }
 
     @Test
     @DisplayName("노선에 구간을 가운데 지점에 추가 할 수 있다.")
@@ -62,7 +49,7 @@ public class LineServiceTest {
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
         assertThat(sections.size()).isEqualTo(2);
-        assertThat(sections.getSections().get(0).getDistance()).isEqualTo(3);
+        assertThat(sections.getSections().get(0).getDistance()).isEqualTo(7);
     }
 
     @Test
@@ -83,6 +70,7 @@ public class LineServiceTest {
         // then
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
+
         assertThat(sections.getSections().size()).isEqualTo(2);
         assertThat(sections.calculateDistance()).isEqualTo(10);
     }

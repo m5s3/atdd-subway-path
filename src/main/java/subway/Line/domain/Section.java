@@ -70,6 +70,10 @@ public class Section {
         this.distance = distance - section.getDistance();
     }
 
+    public void increaseDistance(Section section) {
+        this.distance = distance + section.getDistance();
+    }
+
     public void remove() {
         this.line = null;
     }

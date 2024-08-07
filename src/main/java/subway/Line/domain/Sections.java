@@ -8,6 +8,7 @@ import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -34,35 +35,38 @@ public class Sections {
         }
 
         Optional<Section> optionalAfterSection = this.sections.stream()
-                .filter(section -> section.isUpStation(newSection.getUpStation()))
-                .findAny();
+                .filter(section -> section.isUpStation(newSection.getDownStation()))
+                .findFirst();
 
         if (optionalAfterSection.isPresent()) {
             appendFirst(newSection, optionalAfterSection);
+            return;
         }
 
-        if(optionalAfterSection.isEmpty()) {
+        if (optionalAfterSection.isEmpty()) {
             appendCenter(newSection);
+            return;
         }
-
         this.sections.add(newSection);
     }
 
     private void appendCenter(Section newSection) {
         Optional<Section> optionalBeforeSection = this.sections.stream()
-                .filter(section -> section.isDownStation(newSection.getUpStation()))
-                .findAny();
+                .filter(section -> section.isUpStation(newSection.getUpStation()))
+                .findFirst();
 
         if (optionalBeforeSection.isPresent()) {
             Section beforeSection = optionalBeforeSection.get();
             beforeSection.updateUpStation(newSection.getDownStation());
+            beforeSection.decreaseDistance(newSection);
+            this.sections.add(this.sections.indexOf(beforeSection), newSection);
         }
     }
 
-    private static void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
+    private void appendFirst(Section newSection, Optional<Section> optionalAfterSection) {
         Section afterSection = optionalAfterSection.get();
         afterSection.updateDownStation(newSection.getUpStation());
-        afterSection.decreaseDistance(newSection);
+        sections.add(0, newSection);
     }
 
     private void validateSection(Section newSection) {
