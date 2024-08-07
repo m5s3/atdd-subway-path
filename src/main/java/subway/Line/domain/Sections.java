@@ -41,7 +41,7 @@ public class Sections {
             appendFirst(newSection, optionalAfterSection);
         }
 
-        if(!optionalAfterSection.isPresent()) {
+        if(optionalAfterSection.isEmpty()) {
             appendCenter(newSection);
         }
 
