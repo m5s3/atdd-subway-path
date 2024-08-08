@@ -93,4 +93,12 @@ public class Section {
     public Long getDownStationId() {
         return downStation.getId();
     }
+
+    public String getUpStationName() {
+        return upStation.getName();
+    }
+
+    public String getDownStationName() {
+        return downStation.getName();
+    }
 }
