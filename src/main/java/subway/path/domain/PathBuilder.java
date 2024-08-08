@@ -31,8 +31,4 @@ public class PathBuilder {
 
         graph.setEdgeWeight(graph.addEdge(upStationName, downStationName), section.getDistance());
     }
-
-    public WeightedMultigraph<String, DefaultWeightedEdge> getGraph() {
-        return graph;
-    }
 }
