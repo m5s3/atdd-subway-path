@@ -27,17 +27,24 @@ public class PathService {
         this.sectionRepository = sectionRepository;
     }
 
-    public void getPath(Long source, Long target) {
+    public List<String> getPath(Long source, Long target) {
         Station sourceStation = this.stationRepository.findById(source)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
         Station targetStation = this.stationRepository.findById(target)
                 .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
-        createPaths();
-        pathFinder.getPath(pathBuilder.build(), sourceStation, targetStation);
+        return pathFinder.getPath(pathBuilder.build(), sourceStation, targetStation);
     }
 
-    private void createPaths() {
-        List<Section> sections = sectionRepository.findAll();
+    public void createPaths(List<Section> sections) {
+        System.out.println("PathService.createPaths");
+//        List<Section> sections = sectionRepository.findAll();
+        for (Section section : sections) {
+            System.out.println("section = " + section);
+        }
         sections.forEach(pathBuilder::addSection);
+    }
+
+    public List<Section> findAllSections() {
+        return sectionRepository.findAll();
     }
 }

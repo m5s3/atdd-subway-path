@@ -20,6 +20,7 @@ public class PathController {
 
     @GetMapping
     public ResponseEntity<Void> paths(@RequestParam Long source, @RequestParam Long target) {
+        pathService.createPaths(pathService.findAllSections());
         pathService.getPath(source, target);
         return ResponseEntity.noContent().build();
     }

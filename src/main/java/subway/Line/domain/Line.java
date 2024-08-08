@@ -66,6 +66,10 @@ public class Line {
         this.sections.add(new Section(upStation, downStation, distance, this));
     }
 
+    public void addSection(Section section) {
+        this.sections.add(section);
+    }
+
     public void deleteSection(Station station) {
         this.sections.deleteSection(station);
     }

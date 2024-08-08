@@ -22,14 +22,17 @@ public class PathBuilder {
         String upStationName = section.getUpStationName();
         String downStationName = section.getDownStationName();
         if (!graph.containsVertex(upStationName)) {
+            System.out.println("upStationName = " + upStationName);
             graph.addVertex(upStationName);
         }
 
         if (!graph.containsVertex(downStationName)) {
+            System.out.println("downStationName = " + downStationName);
             graph.addVertex(downStationName);
         }
 
         graph.setEdgeWeight(graph.addEdge(upStationName, downStationName), section.getDistance());
+        System.out.println("graph.getEdge(upStationName, downStationName) = " + graph.getEdge(upStationName, downStationName));
     }
 
     public WeightedMultigraph<String, DefaultWeightedEdge> getGraph() {
