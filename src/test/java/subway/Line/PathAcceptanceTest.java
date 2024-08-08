@@ -99,6 +99,16 @@ public class PathAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
+    @Test
+    void 교대역_양재역_최단_거리() {
+        String url = String.format(PATH, 교대역, 양재역);
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .get(url)
+                .then().log().all().extract();
+
+        assertThat(response.jsonPath().getInt("distance")).isEqualTo(5);
+    }
+
     private ExtractableResponse<Response> 지하철_노선에_지하철_구간_생성_요청(Long lineId, Map<String, Object> params) {
         return RestAssured.given().log().all().when()
                 .body(params)
