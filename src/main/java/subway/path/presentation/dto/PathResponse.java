@@ -1,2 +1,31 @@
-package subway.path.presentation.dto;public class PathResponse {
+package subway.path.presentation.dto;
+
+import java.nio.file.Path;
+import java.util.List;
+import subway.Station.domain.Station;
+import subway.Station.presentation.dto.StationResponse;
+
+public class PathResponse {
+
+    private List<StationResponse> stations;
+    private int distance;
+
+    public PathResponse(List<StationResponse> stations) {}
+
+    public PathResponse(List<StationResponse> stations, int distance) {
+        this.stations = stations;
+        this.distance = distance;
+    }
+
+    public static PathResponse of(List<StationResponse> stations, int distance) {
+        return new PathResponse(stations, distance);
+    }
+
+    public List<StationResponse> getStations() {
+        return stations;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
 }

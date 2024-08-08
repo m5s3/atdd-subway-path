@@ -19,6 +19,11 @@ public class PathFinder {
         return path.getPath(source.getName(), target.getName()).getVertexList();
     }
 
+    public double getPathWeight(ShortestPathAlgorithm path, Station source, Station target) {
+        validatePath(path, source, target);
+        return path.getPath(source.getName(), target.getName()).getWeight();
+    }
+
     private void validatePath(ShortestPathAlgorithm path, Station source, Station target) {
         if (source.equals(target)) {
             throw new CustomException(INVALID_DUPLICATE_PATH);
