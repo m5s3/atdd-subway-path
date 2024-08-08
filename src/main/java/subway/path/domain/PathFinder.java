@@ -24,8 +24,6 @@ public class PathFinder {
             throw new CustomException(INVALID_DUPLICATE_PATH);
         }
 
-        System.out.println("source.getName() = " + source.getName());
-        System.out.println("target.getName() = " + target.getName());
         GraphPath pathPath = path.getPath(source.getName(), target.getName());
         if (Objects.isNull(pathPath)) {
             throw new CustomException(INVALID_CONNECT_PATH);

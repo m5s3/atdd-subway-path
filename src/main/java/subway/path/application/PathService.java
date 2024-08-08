@@ -36,11 +36,6 @@ public class PathService {
     }
 
     public void createPaths(List<Section> sections) {
-        System.out.println("PathService.createPaths");
-//        List<Section> sections = sectionRepository.findAll();
-        for (Section section : sections) {
-            System.out.println("section = " + section);
-        }
         sections.forEach(pathBuilder::addSection);
     }
 
