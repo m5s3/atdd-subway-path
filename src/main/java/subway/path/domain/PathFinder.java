@@ -22,8 +22,7 @@ public class PathFinder {
 
     public List<String> getPath(List<Section> sections, Station source, Station target) {
         if (Objects.isNull(path)) {
-            sections.forEach(PathBuilder::addSection);
-            path = PathBuilder.build();
+            createPath(sections);
         }
         validatePath(path, source, target);
         return path.getPath(source.getName(), target.getName()).getVertexList();
@@ -31,11 +30,16 @@ public class PathFinder {
 
     public double getPathWeight(List<Section> sections, Station source, Station target) {
         if (Objects.isNull(path)) {
-            sections.forEach(PathBuilder::addSection);
-            path = PathBuilder.build();
+            createPath(sections);
         }
         validatePath(path, source, target);
         return path.getPath(source.getName(), target.getName()).getWeight();
+    }
+
+    private void createPath(List<Section> sections) {
+        sections.forEach(section -> PathBuilder.addEdgeToGraph(section.getUpStationName(), section.getDownStationName(),
+                section.getDistance()));
+        path = PathBuilder.build();
     }
 
     private void validatePath(ShortestPathAlgorithm<String, DefaultWeightedEdge> path, Station source, Station target) {
@@ -56,18 +60,16 @@ public class PathFinder {
             return new DijkstraShortestPath<>(graph);
         }
 
-        public static void addSection(Section section) {
-            String upStationName = section.getUpStationName();
-            String downStationName = section.getDownStationName();
-            if (!graph.containsVertex(upStationName)) {
-                graph.addVertex(upStationName);
+        public static void addEdgeToGraph(String source, String target, int weight) {
+            if (!graph.containsVertex(source)) {
+                graph.addVertex(source);
             }
 
-            if (!graph.containsVertex(downStationName)) {
-                graph.addVertex(downStationName);
+            if (!graph.containsVertex(target)) {
+                graph.addVertex(target);
             }
 
-            graph.setEdgeWeight(graph.addEdge(upStationName, downStationName), section.getDistance());
+            graph.setEdgeWeight(graph.addEdge(source, target), weight);
         }
     }
 }
