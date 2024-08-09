@@ -28,20 +28,14 @@ public class PathService {
     }
 
     public List<Station> getPath(Long source, Long target) {
-        Station sourceStation = this.stationRepository.findById(source)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
-        Station targetStation = this.stationRepository.findById(target)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
-        List<String> stationNames = pathFinder.getPath(pathBuilder.build(), sourceStation, targetStation);
+        SourceAndTargetStation sourceAndTargetStation = fetchSourceAndTarget(source, target);
+        List<String> stationNames = pathFinder.getPath(pathBuilder.build(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
         return stationRepository.findByNameIn(stationNames);
     }
 
     public double getPathWeight(Long source, Long target) {
-        Station sourceStation = this.stationRepository.findById(source)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
-        Station targetStation = this.stationRepository.findById(target)
-                .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
-        return pathFinder.getPathWeight(pathBuilder.build(), sourceStation, targetStation);
+        SourceAndTargetStation sourceAndTargetStation = fetchSourceAndTarget(source, target);
+        return pathFinder.getPathWeight(pathBuilder.build(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
     }
 
     public void createPaths(List<Section> sections) {
@@ -50,5 +44,33 @@ public class PathService {
 
     public List<Section> findAllSections() {
         return sectionRepository.findAll();
+    }
+
+    private class SourceAndTargetStation {
+
+        private final Station source;
+        private final Station target;
+
+        public SourceAndTargetStation(Long source, Long target) {
+            this.source = findById(source);
+            this.target = findById(target);
+        }
+
+        public Station getSource() {
+            return source;
+        }
+
+        public Station getTarget() {
+            return target;
+        }
+
+        private Station findById(Long id) {
+            return stationRepository.findById(id)
+                    .orElseThrow(() -> new CustomException(NOT_FOUND_STATION));
+        }
+    }
+
+    private SourceAndTargetStation fetchSourceAndTarget(Long source, Long target) {
+        return new SourceAndTargetStation(source, target);
     }
 }
