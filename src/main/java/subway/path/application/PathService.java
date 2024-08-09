@@ -3,6 +3,7 @@ package subway.path.application;
 import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import subway.line.domain.Section;
 import subway.line.infrastructure.SectionRepository;
@@ -27,7 +28,16 @@ public class PathService {
     public List<Station> getPath(Long source, Long target) {
         SourceAndTargetStation sourceAndTargetStation = fetchSourceAndTarget(source, target);
         List<String> stationNames = pathFinder.getPath(findAllSections(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
-        return stationRepository.findByNameIn(stationNames);
+        List<Station> stations = stationRepository.findByNameIn(stationNames);
+        return toOrderByNames(stationNames, stations);
+    }
+
+    private List<Station> toOrderByNames(List<String> names, List<Station> stations) {
+        return names.stream().flatMap(name -> stations
+                        .stream()
+                        .filter(station -> station.getName().equals(name))
+                )
+                .collect(Collectors.toList());
     }
 
     public double getPathWeight(Long source, Long target) {
