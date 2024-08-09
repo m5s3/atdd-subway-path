@@ -1,4 +1,4 @@
-package subway.Line;
+package subway.line;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,14 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import subway.Line.domain.Sections;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayName("지하철 구간 관련 기능")

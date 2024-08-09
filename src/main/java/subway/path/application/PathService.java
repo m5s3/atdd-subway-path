@@ -4,8 +4,8 @@ import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import subway.Line.domain.Section;
-import subway.Line.infrastructure.SectionRepository;
+import subway.line.domain.Section;
+import subway.line.infrastructure.SectionRepository;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.global.exception.CustomException;

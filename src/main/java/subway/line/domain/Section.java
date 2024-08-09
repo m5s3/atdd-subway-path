@@ -1,4 +1,4 @@
-package subway.Line.domain;
+package subway.line.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

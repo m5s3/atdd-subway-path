@@ -1,6 +1,4 @@
-package subway.Line.presentation.dto;
-
-import subway.Line.domain.Section;
+package subway.line.presentation.dto;
 
 public class SectionResponse {
     private Long id;

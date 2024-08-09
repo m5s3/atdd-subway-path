@@ -1,28 +1,19 @@
 package nextstep.subway.unit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import subway.Line.application.LineService;
-import subway.Line.domain.Line;
-import subway.Line.domain.Section;
-import subway.Line.domain.Sections;
-import subway.Line.infrastructure.LineRepository;
-import subway.Line.presentation.dto.SectionRequest;
+import subway.line.domain.Line;
+import subway.line.domain.Sections;
+import subway.line.infrastructure.LineRepository;
 import subway.Station.application.StationService;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
-import subway.Station.presentation.dto.StationRequest;
-import subway.Station.presentation.dto.StationResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class LineServiceMockTest {

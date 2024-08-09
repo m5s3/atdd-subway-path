@@ -1,7 +1,7 @@
-package subway.Line.infrastructure;
+package subway.line.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import subway.Line.domain.Section;
+import subway.line.domain.Section;
 
 public interface SectionRepository extends JpaRepository<Section, Long> {
 

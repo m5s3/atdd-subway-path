@@ -1,4 +1,4 @@
-package subway.Line;
+package subway.line;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

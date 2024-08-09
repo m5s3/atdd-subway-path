@@ -5,7 +5,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.WeightedMultigraph;
 import org.springframework.stereotype.Component;
-import subway.Line.domain.Section;
+import subway.line.domain.Section;
 
 @Component
 public class PathBuilder {

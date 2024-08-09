@@ -1,4 +1,4 @@
-package subway.Line.application;
+package subway.line.application;
 
 import static subway.global.exception.ExceptionCode.NOT_FOUND_LINE;
 import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import subway.Line.domain.Line;
-import subway.Line.domain.Sections;
-import subway.Line.presentation.dto.LineRequest;
-import subway.Line.presentation.dto.LineResponse;
-import subway.Line.infrastructure.LineRepository;
-import subway.Line.presentation.dto.SectionRequest;
-import subway.Line.presentation.dto.SectionResponse;
-import subway.Line.presentation.dto.SectionsResponse;
+import subway.line.domain.Line;
+import subway.line.domain.Sections;
+import subway.line.presentation.dto.LineRequest;
+import subway.line.presentation.dto.LineResponse;
+import subway.line.infrastructure.LineRepository;
+import subway.line.presentation.dto.SectionRequest;
+import subway.line.presentation.dto.SectionResponse;
+import subway.line.presentation.dto.SectionsResponse;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.global.exception.CustomException;
@@ -42,8 +42,7 @@ public class LineService {
     }
 
     private UpAndDownStation fetchUpAndDownStation(Long upStationId, Long downStationId) {
-        UpAndDownStation upAndDownStation = new UpAndDownStation(upStationId, downStationId);
-        return upAndDownStation;
+        return new UpAndDownStation(upStationId, downStationId);
     }
 
     private LineResponse createLineResponse(Line line) {

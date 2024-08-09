@@ -1,7 +1,6 @@
-package subway.Line.domain;
+package subway.line.domain;
 
 import java.util.Objects;
-import java.util.Stack;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

@@ -1,14 +1,12 @@
-package subway.Line.domain;
+package subway.line.domain;
 
 import static subway.global.exception.ExceptionCode.INVALID_DUPLICATE_SECTION;
 import static subway.global.exception.ExceptionCode.INVALID_NO_EXIST_SECTION;
 import static subway.global.exception.ExceptionCode.INVALID_SECTION_MIN;
-import static subway.global.exception.ExceptionCode.NOT_FOUND_STATION;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
