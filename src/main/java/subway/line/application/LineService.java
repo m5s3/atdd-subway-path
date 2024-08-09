@@ -75,7 +75,7 @@ public class LineService {
     }
 
     private SectionsResponse createSectionsResponse(Sections sections) {
-        return new SectionsResponse(sections.getSections().stream()
+        return new SectionsResponse(sections.getLineSections().stream()
                 .map(section -> new SectionResponse.Builder()
                         .id(section.getId())
                         .upStationId(section.getUpStationId())

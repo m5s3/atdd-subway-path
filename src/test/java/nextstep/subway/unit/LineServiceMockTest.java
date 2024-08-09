@@ -51,6 +51,6 @@ public class LineServiceMockTest {
         // then
         // lineService.findLineById 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
-        assertThat(sections.getSections().size()).isEqualTo(2);
+        assertThat(sections.getLineSections().size()).isEqualTo(2);
     }
 }

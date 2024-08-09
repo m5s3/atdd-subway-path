@@ -17,22 +17,22 @@ import subway.global.exception.CustomException;
 public class Sections {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "line", orphanRemoval = true)
-    private List<Section> sections = new ArrayList<>();
+    private List<Section> lineSections = new ArrayList<>();
 
     public Sections() {}
 
     public Sections(List<Section> sections) {
-        this.sections = sections;
+        this.lineSections = sections;
     }
 
     public void add(Section newSection) {
         validateSection(newSection);
-        if (this.sections.isEmpty()) {
-            this.sections.add(newSection);
+        if (this.lineSections.isEmpty()) {
+            this.lineSections.add(newSection);
             return;
         }
 
-        Optional<Section> optionalAfterSection = this.sections.stream()
+        Optional<Section> optionalAfterSection = this.lineSections.stream()
                 .filter(section -> section.isUpStation(newSection.getUpStation()))
                 .findFirst();
 
@@ -48,22 +48,22 @@ public class Sections {
             return;
         }
 
-        this.sections.add(newSection);
+        this.lineSections.add(newSection);
     }
 
     private void appendCenter(Section afterSection, Section newSection) {
         afterSection.updateUpStation(newSection.getDownStation());
         afterSection.decreaseDistance(newSection);
-        this.sections.add(this.sections.indexOf(afterSection), newSection);
+        this.lineSections.add(this.lineSections.indexOf(afterSection), newSection);
     }
 
     private void appendFirst(Section afterSection, Section newSection) {
         afterSection.updateDownStation(newSection.getUpStation());
-        sections.add(0, newSection);
+        lineSections.add(0, newSection);
     }
 
     private void validateSection(Section newSection) {
-        boolean isDuplicatedSection = this.sections.stream()
+        boolean isDuplicatedSection = this.lineSections.stream()
                 .anyMatch(section -> section.isUpStation((newSection.getUpStation())) && section.isDownStation(
                         newSection.getDownStation()));
 
@@ -73,15 +73,15 @@ public class Sections {
     }
 
     private boolean isDownStation(Station station) {
-        if (this.sections.isEmpty()) {
+        if (this.lineSections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(this.sections.size() - 1).isDownStation(station);
+        return this.lineSections.get(this.lineSections.size() - 1).isDownStation(station);
     }
 
 
     public void deleteSection(Station station) {
-        if (this.sections.size() < 2) {
+        if (this.lineSections.size() < 2) {
             throw new CustomException(INVALID_SECTION_MIN);
         }
 
@@ -89,13 +89,13 @@ public class Sections {
             mergeSection(findBeforeSection(station), findAfterSection(station));
             return;
         }
-        Optional<Section> optionalFirstSection = this.sections.stream()
+        Optional<Section> optionalFirstSection = this.lineSections.stream()
                 .filter(section -> section.isUpStation(station))
                 .findFirst();
 
         optionalFirstSection.ifPresent(this::removeSection);
 
-        Optional<Section> optionalLastSection = this.sections.stream()
+        Optional<Section> optionalLastSection = this.lineSections.stream()
                 .filter(section -> section.isDownStation(station))
                 .findFirst();
 
@@ -104,24 +104,24 @@ public class Sections {
 
     private void removeSection(Section section) {
         section.remove();
-        this.sections.remove(section);
+        this.lineSections.remove(section);
     }
 
     private void mergeSection(Section beforeSection, Section afterSection) {
         beforeSection.updateDownStation(afterSection.getDownStation());
         beforeSection.increaseDistance(afterSection);
         afterSection.remove();
-        this.sections.remove(afterSection);
+        this.lineSections.remove(afterSection);
     }
 
     private Section findBeforeSection(Station station) {
-        return this.sections.stream().filter(section -> section.isDownStation(station)).findFirst()
+        return this.lineSections.stream().filter(section -> section.isDownStation(station)).findFirst()
                 .orElseThrow(() -> new CustomException(
                         INVALID_NO_EXIST_SECTION));
     }
 
     private Section findAfterSection(Station station) {
-        return this.sections.stream().filter(section -> section.isUpStation(station)).findFirst()
+        return this.lineSections.stream().filter(section -> section.isUpStation(station)).findFirst()
                 .orElseThrow(() -> new CustomException(
                         INVALID_NO_EXIST_SECTION));
     }
@@ -131,39 +131,39 @@ public class Sections {
     }
 
     private boolean isUpStation(Station station) {
-        if (this.sections.isEmpty()) {
+        if (this.lineSections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(0).isUpStation(station);
+        return this.lineSections.get(0).isUpStation(station);
     }
 
     public Long getUpStationId() {
-        if (this.sections.isEmpty()) {
+        if (this.lineSections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(0).getUpStationId();
+        return this.lineSections.get(0).getUpStationId();
     }
 
     public Long getDownStationId() {
-        if (this.sections.isEmpty()) {
+        if (this.lineSections.isEmpty()) {
             throw new CustomException(INVALID_NO_EXIST_SECTION);
         }
-        return this.sections.get(this.sections.size() - 1).getDownStationId();
+        return this.lineSections.get(this.lineSections.size() - 1).getDownStationId();
     }
 
     public int calculateDistance() {
-        return this.sections.stream().mapToInt(Section::getDistance).sum();
+        return this.lineSections.stream().mapToInt(Section::getDistance).sum();
     }
 
     public boolean isEmpty() {
-        return this.sections.isEmpty();
+        return this.lineSections.isEmpty();
     }
 
-    public List<Section> getSections() {
-        return sections;
+    public List<Section> getLineSections() {
+        return lineSections;
     }
 
     public int size() {
-        return sections.size();
+        return lineSections.size();
     }
 }

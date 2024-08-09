@@ -46,7 +46,7 @@ public class LineServiceTest extends LineFixture {
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
         assertThat(sections.size()).isEqualTo(2);
-        assertThat(sections.getSections().get(0).getDistance()).isEqualTo(7);
+        assertThat(sections.getLineSections().get(0).getDistance()).isEqualTo(7);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class LineServiceTest extends LineFixture {
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
 
-        assertThat(sections.getSections().size()).isEqualTo(2);
+        assertThat(sections.getLineSections().size()).isEqualTo(2);
         assertThat(sections.calculateDistance()).isEqualTo(10);
     }
 
