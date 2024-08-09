@@ -1,8 +1,6 @@
 package subway.path.presentation.dto;
 
-import java.nio.file.Path;
 import java.util.List;
-import subway.Station.domain.Station;
 import subway.Station.presentation.dto.StationResponse;
 
 public class PathResponse {
