@@ -16,7 +16,6 @@ import subway.line.infrastructure.SectionRepository;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.path.application.PathService;
-import subway.path.domain.PathBuilder;
 import subway.path.domain.PathFinder;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -83,16 +82,12 @@ public class PathServiceMockTest {
         Mockito.lenient().when(stationRepository.findByNameIn(List.of("교대역", "남부터미널역", "양재역")))
                 .thenReturn(List.of(교대역, 남부터미널역, 양재역));
 
-        Mockito.lenient().when(sectionRepository.findById(교대역_강남역_구간_id)).thenReturn(Optional.of(교대역_강남역_구간));
-        Mockito.lenient().when(sectionRepository.findById(강남역_양재역_구간_id)).thenReturn(Optional.of(강남역_양재역_구간));
-        Mockito.lenient().when(sectionRepository.findById(교대역_남부터미널_구간_id)).thenReturn(Optional.of(교대역_남부터미널_구간));
-        Mockito.lenient().when(sectionRepository.findById(남부터미널_양재역_구간_id)).thenReturn(Optional.of(남부터미널_양재역_구간));
+        Mockito.lenient().when(sectionRepository.findAll()).thenReturn(List.of(교대역_강남역_구간, 강남역_양재역_구간, 교대역_남부터미널_구간, 남부터미널_양재역_구간));
 
-        pathService = new PathService(new PathBuilder(), new PathFinder(), stationRepository, sectionRepository);
+        pathService = new PathService(new PathFinder(), stationRepository, sectionRepository);
 
         // when
         List<Section> sections = List.of(교대역_강남역_구간, 강남역_양재역_구간, 교대역_남부터미널_구간, 남부터미널_양재역_구간);
-        pathService.createPaths(sections);
         List<Station> result = pathService.getPath(교대역_id, 양재역_id);
 
         // then
@@ -144,16 +139,12 @@ public class PathServiceMockTest {
         Mockito.lenient().when(stationRepository.findByNameIn(List.of("교대역", "남부터미널역", "양재역")))
                 .thenReturn(List.of(교대역, 남부터미널역, 양재역));
 
-        Mockito.lenient().when(sectionRepository.findById(교대역_강남역_구간_id)).thenReturn(Optional.of(교대역_강남역_구간));
-        Mockito.lenient().when(sectionRepository.findById(강남역_양재역_구간_id)).thenReturn(Optional.of(강남역_양재역_구간));
-        Mockito.lenient().when(sectionRepository.findById(교대역_남부터미널_구간_id)).thenReturn(Optional.of(교대역_남부터미널_구간));
-        Mockito.lenient().when(sectionRepository.findById(남부터미널_양재역_구간_id)).thenReturn(Optional.of(남부터미널_양재역_구간));
+        Mockito.lenient().when(sectionRepository.findAll()).thenReturn(List.of(교대역_강남역_구간, 강남역_양재역_구간, 교대역_남부터미널_구간, 남부터미널_양재역_구간));
 
-        pathService = new PathService(new PathBuilder(), new PathFinder(), stationRepository, sectionRepository);
+        pathService = new PathService(new PathFinder(), stationRepository, sectionRepository);
 
         // when
         List<Section> sections = List.of(교대역_강남역_구간, 강남역_양재역_구간, 교대역_남부터미널_구간, 남부터미널_양재역_구간);
-        pathService.createPaths(sections);
         double weight = pathService.getPathWeight(교대역_id, 양재역_id);
 
         // then

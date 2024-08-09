@@ -9,19 +9,16 @@ import subway.line.infrastructure.SectionRepository;
 import subway.Station.domain.Station;
 import subway.Station.infrastructure.StationRepository;
 import subway.global.exception.CustomException;
-import subway.path.domain.PathBuilder;
 import subway.path.domain.PathFinder;
 
 @Service
 public class PathService {
 
-    private final PathBuilder pathBuilder;
     private final PathFinder pathFinder;
     private final StationRepository stationRepository;
     private final SectionRepository sectionRepository;
 
-    public PathService(PathBuilder pathBuilder, PathFinder pathFinder, StationRepository stationRepository, SectionRepository sectionRepository) {
-        this.pathBuilder = pathBuilder;
+    public PathService(PathFinder pathFinder, StationRepository stationRepository, SectionRepository sectionRepository) {
         this.pathFinder = pathFinder;
         this.stationRepository = stationRepository;
         this.sectionRepository = sectionRepository;
@@ -29,17 +26,13 @@ public class PathService {
 
     public List<Station> getPath(Long source, Long target) {
         SourceAndTargetStation sourceAndTargetStation = fetchSourceAndTarget(source, target);
-        List<String> stationNames = pathFinder.getPath(pathBuilder.build(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
+        List<String> stationNames = pathFinder.getPath(findAllSections(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
         return stationRepository.findByNameIn(stationNames);
     }
 
     public double getPathWeight(Long source, Long target) {
         SourceAndTargetStation sourceAndTargetStation = fetchSourceAndTarget(source, target);
-        return pathFinder.getPathWeight(pathBuilder.build(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
-    }
-
-    public void createPaths(List<Section> sections) {
-        sections.forEach(pathBuilder::addSection);
+        return pathFinder.getPathWeight(findAllSections(), sourceAndTargetStation.getSource(), sourceAndTargetStation.getTarget());
     }
 
     public List<Section> findAllSections() {

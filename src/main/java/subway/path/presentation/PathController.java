@@ -24,7 +24,6 @@ public class PathController {
 
     @GetMapping
     public ResponseEntity<PathResponse> paths(@RequestParam Long source, @RequestParam Long target) {
-        pathService.createPaths(pathService.findAllSections());
         List<Station> stations = pathService.getPath(source, target);
         double pathWeight = pathService.getPathWeight(source, target);
         return ResponseEntity.ok().body(PathResponse.of(stations.stream().map(StationResponse::fromEntity).collect(Collectors.toList()),
