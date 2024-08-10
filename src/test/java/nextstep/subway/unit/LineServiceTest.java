@@ -3,18 +3,15 @@ package nextstep.subway.unit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import subway.Line.application.LineService;
-import subway.Line.domain.Line;
-import subway.Line.domain.Sections;
-import subway.Line.infrastructure.LineRepository;
-import subway.Line.presentation.dto.SectionRequest;
-import subway.Station.domain.Station;
+import subway.line.application.LineService;
+import subway.line.domain.Sections;
+import subway.line.infrastructure.LineRepository;
+import subway.line.presentation.dto.SectionRequest;
 import subway.Station.infrastructure.StationRepository;
 import subway.SubwayApplication;
 import subway.global.exception.CustomException;
@@ -49,7 +46,7 @@ public class LineServiceTest extends LineFixture {
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
         assertThat(sections.size()).isEqualTo(2);
-        assertThat(sections.getSections().get(0).getDistance()).isEqualTo(7);
+        assertThat(sections.getLineSections().get(0).getDistance()).isEqualTo(7);
     }
 
     @Test
@@ -71,7 +68,7 @@ public class LineServiceTest extends LineFixture {
         // line.getSections 메서드를 통해 검증
         Sections sections = 신분당선.getSections();
 
-        assertThat(sections.getSections().size()).isEqualTo(2);
+        assertThat(sections.getLineSections().size()).isEqualTo(2);
         assertThat(sections.calculateDistance()).isEqualTo(10);
     }
 

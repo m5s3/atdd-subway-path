@@ -1,7 +1,6 @@
-package subway.Line.domain;
+package subway.line.domain;
 
 import java.util.Objects;
-import java.util.Stack;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -64,6 +63,10 @@ public class Line {
 
     public void addSection(Station upStation, Station downStation, int distance) {
         this.sections.add(new Section(upStation, downStation, distance, this));
+    }
+
+    public void addSection(Section section) {
+        this.sections.add(section);
     }
 
     public void deleteSection(Station station) {

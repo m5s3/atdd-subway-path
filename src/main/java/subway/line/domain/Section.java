@@ -1,4 +1,4 @@
-package subway.Line.domain;
+package subway.line.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -92,5 +92,13 @@ public class Section {
 
     public Long getDownStationId() {
         return downStation.getId();
+    }
+
+    public String getUpStationName() {
+        return upStation.getName();
+    }
+
+    public String getDownStationName() {
+        return downStation.getName();
     }
 }

@@ -7,4 +7,6 @@ import subway.Station.domain.Station;
 public interface StationRepository extends JpaRepository<Station, Long> {
 
     List<Station> findStationsByIdIn(List<Long> ids);
+
+    List<Station> findByNameIn(List<String> names);
 }

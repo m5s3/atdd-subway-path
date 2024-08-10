@@ -1,4 +1,4 @@
-package subway.Line.presentation;
+package subway.line.presentation;
 
 import java.net.URI;
 import java.util.List;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import subway.Line.presentation.dto.LineRequest;
-import subway.Line.presentation.dto.LineResponse;
-import subway.Line.application.LineService;
-import subway.Line.presentation.dto.SectionRequest;
+import subway.line.presentation.dto.LineRequest;
+import subway.line.presentation.dto.LineResponse;
+import subway.line.application.LineService;
+import subway.line.presentation.dto.SectionRequest;
 
 @RestController
 @RequestMapping("/lines")

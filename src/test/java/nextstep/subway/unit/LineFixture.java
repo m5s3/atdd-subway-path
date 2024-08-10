@@ -1,7 +1,7 @@
 package nextstep.subway.unit;
 
 import org.junit.jupiter.api.BeforeEach;
-import subway.Line.domain.Line;
+import subway.line.domain.Line;
 import subway.Station.domain.Station;
 
 @SuppressWarnings("NonAsciiCharacters")
